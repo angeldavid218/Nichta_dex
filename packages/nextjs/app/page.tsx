@@ -19,8 +19,14 @@ const Home = () => {
           <p>open api chat</p>
         </div>
       </div>
-      <div className="mt-5 grid grid-cols-3 gap-4">
-        <div className="col-span-1 card bg-base-100">
+      <div className="grid grid-cols-4 gap-4">
+        <div className="mt-4 col-span-1 card bg-base-100">
+          <p>Token swapper</p>
+        </div>
+        <div className="mt-4 col-span-2 card bg-base-100">
+          <p>Token swapper</p>
+        </div>
+        <div className="mt-4 col-span-1 card bg-base-100">
           <p>Token swapper</p>
         </div>
       </div>
