@@ -1,30 +1,31 @@
 import Link from 'next/link';
 import { ConnectedAddress } from '~~/components/ConnectedAddress';
-
+import BuyCoins from '~~/components/nichta/BuyCoins';
+import SwapPoolChart from '~~/components/nichta/SwapPoolChart';
+import Chat from '~~/components/nichta/Chat';
+import SwapTokens from '~~/components/nichta/SwapTokens';
+import Positions from '~~/components/nichta/Positions';
 const Home = () => {
   return (
     <div>
       <div className="pt-10 grid grid-cols-4 gap-4">
         {/* <div className="bg-container flex-grow w-full mt-16 px-8 py-12"></div> */}
         <div className="col-span-1 card bg-base-100">
-          <div className="card-body">
-            <h2 className="card-title">NichtaDex</h2>
-            <p>Decentralized Exchange</p>
-          </div>
+          <BuyCoins />
         </div>
         <div className="col-span-2 card bg-base-100">
-          <p>Connect your wallet to interact with the dApp</p>
+          <SwapPoolChart />
         </div>
         <div className="col-span-1 card bg-base-100">
-          <p>open api chat</p>
+          <Chat />
         </div>
       </div>
       <div className="grid grid-cols-4 gap-4">
         <div className="mt-4 col-span-1 card bg-base-100">
-          <p>Token swapper</p>
+          <SwapTokens />
         </div>
         <div className="mt-4 col-span-2 card bg-base-100">
-          <p>Token swapper</p>
+          <Positions />
         </div>
         <div className="mt-4 col-span-1 card bg-base-100">
           <p>Token swapper</p>
