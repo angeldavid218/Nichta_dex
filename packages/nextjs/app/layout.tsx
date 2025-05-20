@@ -9,9 +9,10 @@ export const metadata: Metadata = {
   icons: "/logo.ico",
 };
 
+
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html suppressHydrationWarning>
+    <html suppressHydrationWarning lang="en">
       <body suppressHydrationWarning>
         <ThemeProvider enableSystem>
           <ScaffoldStarkAppWithProviders>
