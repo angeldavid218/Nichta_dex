@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
 // @refresh reset
-import { Balance } from "../Balance";
-import { AddressInfoDropdown } from "./AddressInfoDropdown";
-import { AddressQRCodeModal } from "./AddressQRCodeModal";
-import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
-import { useAutoConnect, useNetworkColor } from "~~/hooks/scaffold-stark";
-import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
-import { useAccount, useConnect, useNetwork } from "@starknet-react/core";
-import { Address } from "@starknet-react/chains";
-import { useEffect, useMemo, useState } from "react";
-import ConnectModal from "./ConnectModal";
+import { Balance } from '../Balance';
+import { AddressInfoDropdown } from './AddressInfoDropdown';
+import { AddressQRCodeModal } from './AddressQRCodeModal';
+import { WrongNetworkDropdown } from './WrongNetworkDropdown';
+import { useAutoConnect, useNetworkColor } from '~~/hooks/scaffold-stark';
+import { useTargetNetwork } from '~~/hooks/scaffold-stark/useTargetNetwork';
+import { getBlockExplorerAddressLink } from '~~/utils/scaffold-stark';
+import { useAccount, useConnect, useNetwork } from '@starknet-react/core';
+import { Address } from '@starknet-react/chains';
+import { useEffect, useMemo, useState } from 'react';
+import ConnectModal from './ConnectModal';
 
 /**
  * Custom Connect Button (watch balance + custom design)
@@ -24,7 +24,7 @@ export const CustomConnectButton = () => {
   const { account, status, address: accountAddress } = useAccount();
   const [accountChainId, setAccountChainId] = useState<bigint>(0n);
   const { chain } = useNetwork();
-
+  console.log('account address', accountAddress);
   const blockExplorerAddressLink = useMemo(() => {
     return (
       accountAddress &&
@@ -52,14 +52,14 @@ export const CustomConnectButton = () => {
         setAccountChainId(chainId);
       }
     };
-    connector?.on("change", handleChainChange);
+    connector?.on('change', handleChainChange);
     return () => {
-      connector?.off("change", handleChainChange);
+      connector?.off('change', handleChainChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connector]);
 
-  if (status === "disconnected" || accountChainId === 0n)
+  if (status === 'disconnected' || accountChainId === 0n)
     return <ConnectModal />;
 
   if (accountChainId !== targetNetwork.id) {
@@ -79,8 +79,8 @@ export const CustomConnectButton = () => {
       </div>
       <AddressInfoDropdown
         address={accountAddress as Address}
-        displayName={""}
-        ensAvatar={""}
+        displayName={''}
+        ensAvatar={''}
         blockExplorerAddressLink={blockExplorerAddressLink}
       />
       <AddressQRCodeModal

@@ -29,6 +29,8 @@
     "verify": "yarn workspace @ss-2/snfoundry verify"
   },
   "dependencies": {
+    "dotenv": "^16.5.0",
+    "openai": "^4.100.0",
     "postcss": "^8.4.38",
     "recharts": "^2.15.3"
   },
