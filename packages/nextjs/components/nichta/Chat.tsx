@@ -60,12 +60,22 @@ export default function Chat() {
         </button>
       </form>
       <div className="flex flex-col gap-2 mt-4 overflow-y-auto h-[300px]">
-        {isLoading && <div className="skeleton h-32 w-full"></div>}
+        {isLoading && (
+          <div className="flex flex-col gap-2">
+            <div className="skeleton h-32 w-full"></div>
+            <div className="skeleton h-32 w-full"></div>
+            <div className="skeleton h-32 w-full"></div>
+            <div className="skeleton h-32 w-full"></div>
+          </div>
+        )}
         {!isLoading && strategies.length === 0 && <p>No strategies yet</p>}
         {!isLoading &&
           strategies.length > 0 &&
-          strategies.map((strategy) => (
-            <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-5">
+          strategies.map((strategy, index) => (
+            <fieldset
+              key={index}
+              className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-5"
+            >
               <legend className="fieldset-legend text-sm">
                 {strategy.name}
               </legend>
