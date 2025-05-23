@@ -1,13 +1,12 @@
-"use client";
-import { useAccount } from "~~/hooks/useAccount";
-import { Address } from "./scaffold-stark";
-import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
+'use client';
+import { useAccount } from '~~/hooks/useAccount';
+import { Address } from './scaffold-stark';
+import { useScaffoldStarkProfile } from '~~/hooks/scaffold-stark/useScaffoldStarkProfile';
 
 export const ConnectedAddress = () => {
   const connectedAddress = useAccount();
-
   const { data: fetchedProfile, isLoading } = useScaffoldStarkProfile(
-    connectedAddress.address,
+    connectedAddress.address
   );
 
   return (

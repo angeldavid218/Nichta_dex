@@ -1,9 +1,16 @@
-import React from 'react';
+'use client';
+import React, { useMemo } from 'react';
+import { useAccount } from '~~/hooks/useAccount';
 
 export default function SwapTokens() {
+  const { address: accountAddress } = useAccount();
+  const address = useMemo(() => accountAddress, [accountAddress]);
   return (
     <div className="p-3">
       <h2 className="text-xl font-semibold mb-4">Swap Tokens</h2>
+      {!address && (
+        <p className="text-red-500 text-sm">Please connect your wallet</p>
+      )}
       <div className="flex flex-col gap-4">
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
           <legend className="fieldset-legend">You Paid</legend>
@@ -11,12 +18,12 @@ export default function SwapTokens() {
             <input type="number" className="input" placeholder="0.0" />
             <select className="select">
               <option>ETH</option>
-              <option>USDT</option>
+              <option>STRK</option>
             </select>
           </div>
         </fieldset>
         <div className="flex justify-center">
-          <button className="btn btn-primary">
+          <button disabled={!address} className="btn btn-primary">
             <svg
               className="w-6 h-6 text-gray-800 dark:text-white"
               aria-hidden="true"
@@ -41,12 +48,14 @@ export default function SwapTokens() {
           <div className="flex gap-2">
             <input type="number" className="input" placeholder="0.0" disabled />
             <select className="select" disabled>
+              <option>STRK</option>
               <option>ETH</option>
-              <option>USDT</option>
             </select>
           </div>
         </fieldset>
-        <button className="btn btn-primary w-full">Swap</button>
+        <button disabled={!address} className="btn btn-primary w-full">
+          Swap
+        </button>
       </div>
     </div>
   );
