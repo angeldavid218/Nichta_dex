@@ -149,12 +149,12 @@ export const Header = () => {
           passHref
           className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0"
         >
-          <div className="flex relative w-10 h-10">
+          <div className="flex relative w-20 h-20">
             <Image
-              alt="SE2 logo"
+              alt="NichtaDex logo"
               className="cursor-pointer"
               fill
-              src="/logo.svg"
+              src="/nichta_logo.png"
             />
           </div>
           <div className="flex flex-col">
