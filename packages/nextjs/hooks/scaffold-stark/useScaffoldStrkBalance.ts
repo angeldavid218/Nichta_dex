@@ -11,7 +11,6 @@ type UseScaffoldStrkBalanceProps = {
 
 const useScaffoldStrkBalance = ({ address }: UseScaffoldStrkBalanceProps) => {
   const { data: deployedContract } = useDeployedContractInfo('Strk');
-  console.log('deployedContract', deployedContract);
   const { data, ...props } = useReadContract({
     functionName: 'balance_of',
     address: deployedContract?.address,
@@ -21,7 +20,6 @@ const useScaffoldStrkBalance = ({ address }: UseScaffoldStrkBalanceProps) => {
     args: address ? [address] : [],
     blockIdentifier: 'pending' as BlockNumber,
   });
-  console.log('data', data);
 
   return {
     value: data as unknown as bigint,

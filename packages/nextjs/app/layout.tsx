@@ -1,14 +1,13 @@
-import type { Metadata } from "next";
-import { ScaffoldStarkAppWithProviders } from "~~/components/ScaffoldStarkAppWithProviders";
-import "~~/styles/globals.css";
-import { ThemeProvider } from "~~/components/ThemeProvider";
+import type { Metadata } from 'next';
+import { ScaffoldStarkAppWithProviders } from '~~/components/ScaffoldStarkAppWithProviders';
+import '~~/styles/globals.css';
+import { ThemeProvider } from '~~/components/ThemeProvider';
 
 export const metadata: Metadata = {
-  title: "Scaffold-Stark",
-  description: "Fast track your starknet journey",
-  icons: "/logo.ico",
+  title: 'NichtaDex',
+  description: 'Decentralized Exchange',
+  icons: '/favicon-32x32.png',
 };
-
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   return (
