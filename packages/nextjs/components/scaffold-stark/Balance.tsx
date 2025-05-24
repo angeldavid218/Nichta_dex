@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Address } from '@starknet-react/chains';
-import { useGlobalState } from '~~/services/store/store';
-import useScaffoldStrkBalance from '~~/hooks/scaffold-stark/useScaffoldStrkBalance';
+import { useState } from "react";
+import { Address } from "@starknet-react/chains";
+import { useGlobalState } from "~~/services/store/store";
+import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
 
 type BalanceProps = {
   address?: Address;
@@ -14,7 +14,7 @@ type BalanceProps = {
 /**
  * Display (STRK & USD) balance of an address.
  */
-export const Balance = ({ address, className = '', usdMode }: BalanceProps) => {
+export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   const strkPrice = useGlobalState((state) => state.nativeCurrencyPrice);
   const {
     formatted: strkFormatted,
@@ -25,7 +25,7 @@ export const Balance = ({ address, className = '', usdMode }: BalanceProps) => {
     address,
   });
   const [displayUsdMode, setDisplayUsdMode] = useState(
-    strkPrice > 0 ? Boolean(usdMode) : false
+    strkPrice > 0 ? Boolean(usdMode) : false,
   );
 
   const toggleBalanceMode = () => {
@@ -69,7 +69,7 @@ export const Balance = ({ address, className = '', usdMode }: BalanceProps) => {
             <div className="flex">
               <span className="text-[0.8em] font-bold mr-1">$</span>
               <span>
-                {strkBalanceInUsd.toLocaleString('en-US', {
+                {strkBalanceInUsd.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}

@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import React, { useCallback, useRef, useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Bars3Icon, BugAntIcon } from '@heroicons/react/24/outline';
-import { useOutsideClick } from '~~/hooks/scaffold-stark';
-import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
-import { useTheme } from 'next-themes';
-import { useTargetNetwork } from '~~/hooks/scaffold-stark/useTargetNetwork';
-import { devnet } from '@starknet-react/chains';
-import { SwitchTheme } from './SwitchTheme';
-import { useAccount, useNetwork, useProvider } from '@starknet-react/core';
-import { BlockIdentifier } from 'starknet';
+import React, { useCallback, useRef, useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
+import { useOutsideClick } from "~~/hooks/scaffold-stark";
+import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
+import { useTheme } from "next-themes";
+import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
+import { devnet } from "@starknet-react/chains";
+import { SwitchTheme } from "./SwitchTheme";
+import { useAccount, useNetwork, useProvider } from "@starknet-react/core";
+import { BlockIdentifier } from "starknet";
 
 type HeaderMenuLink = {
   label: string;
@@ -22,12 +22,12 @@ type HeaderMenuLink = {
 
 export const menuLinks: HeaderMenuLink[] = [
   {
-    label: 'Home',
-    href: '/',
+    label: "Home",
+    href: "/",
   },
   {
-    label: 'Debug Contracts',
-    href: '/debug',
+    label: "Debug Contracts",
+    href: "/debug",
     icon: <BugAntIcon className="h-4 w-4" />,
   },
 ];
@@ -38,7 +38,7 @@ export const HeaderMenuLinks = () => {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    setIsDark(theme === 'dark');
+    setIsDark(theme === "dark");
   }, [theme]);
   return (
     <>
@@ -51,8 +51,8 @@ export const HeaderMenuLinks = () => {
               passHref
               className={`${
                 isActive
-                  ? '!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md'
-                  : ''
+                  ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
+                  : ""
               } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
             >
               {icon}
@@ -74,7 +74,7 @@ export const Header = () => {
 
   useOutsideClick(
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), [])
+    useCallback(() => setIsDrawerOpen(false), []),
   );
 
   const { targetNetwork } = useTargetNetwork();
@@ -87,7 +87,7 @@ export const Header = () => {
 
   useEffect(() => {
     if (
-      status === 'connected' &&
+      status === "connected" &&
       address &&
       chainId === targetNetwork.id &&
       chain.network === targetNetwork.network
@@ -99,8 +99,8 @@ export const Header = () => {
           else setIsDeployed(false);
         })
         .catch((e) => {
-          console.error('contract check', e);
-          if (e.toString().includes('Contract not found')) {
+          console.error("contract check", e);
+          if (e.toString().includes("Contract not found")) {
             setIsDeployed(false);
           }
         });
@@ -125,7 +125,7 @@ export const Header = () => {
               [@media(max-width:379px)]:!px-3 [@media(max-width:379px)]:!py-1 
               [@media(max-width:379px)]:!h-9 [@media(max-width:379px)]:!min-h-0
               [@media(max-width:379px)]:!w-10
-              ${isDrawerOpen ? 'hover:bg-secondary' : 'hover:bg-transparent'}`}
+              ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
             onClick={() => {
               setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
             }}
@@ -167,7 +167,7 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-2 gap-4">
-        {status === 'connected' && !isDeployed ? (
+        {status === "connected" && !isDeployed ? (
           <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
             Wallet Not Deployed
           </span>
@@ -176,7 +176,7 @@ export const Header = () => {
         {/* <FaucetButton /> */}
         <SwitchTheme
           className={`pointer-events-auto ${
-            isLocalNetwork ? 'mb-1 lg:mb-0' : ''
+            isLocalNetwork ? "mb-1 lg:mb-0" : ""
           }`}
         />
       </div>
