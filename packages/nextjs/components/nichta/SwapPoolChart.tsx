@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import * as Recharts from 'recharts';
+import React from "react";
+import * as Recharts from "recharts";
 
 const {
   LineChart,
@@ -17,13 +17,13 @@ const {
 export default function SwapPoolChart() {
   // Dummy data for the chart
   const data = [
-    { name: 'Jan', price: 400 },
-    { name: 'Feb', price: 300 },
-    { name: 'Mar', price: 600 },
-    { name: 'Apr', price: 800 },
-    { name: 'May', price: 500 },
-    { name: 'Jun', price: 900 },
-    { name: 'Jul', price: 1000 },
+    { name: "Jan", price: 400 },
+    { name: "Feb", price: 300 },
+    { name: "Mar", price: 600 },
+    { name: "Apr", price: 800 },
+    { name: "May", price: 500 },
+    { name: "Jun", price: 900 },
+    { name: "Jul", price: 1000 },
   ];
 
   return (
@@ -44,22 +44,22 @@ export default function SwapPoolChart() {
               <CartesianGrid strokeDasharray="3 3" stroke="#2D3748" />
               <XAxis
                 dataKey="name"
-                tick={{ fill: '#A0AEC0' }}
-                axisLine={{ stroke: '#4A5568' }}
-                tickLine={{ stroke: '#4A5568' }}
+                tick={{ fill: "#A0AEC0" }}
+                axisLine={{ stroke: "#4A5568" }}
+                tickLine={{ stroke: "#4A5568" }}
               />
               <YAxis
-                tick={{ fill: '#A0AEC0' }}
-                axisLine={{ stroke: '#4A5568' }}
-                tickLine={{ stroke: '#4A5568' }}
+                tick={{ fill: "#A0AEC0" }}
+                axisLine={{ stroke: "#4A5568" }}
+                tickLine={{ stroke: "#4A5568" }}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#1A202C',
-                  borderColor: '#2D3748',
-                  borderRadius: '0.5rem',
+                  backgroundColor: "#1A202C",
+                  borderColor: "#2D3748",
+                  borderRadius: "0.5rem",
                 }}
-                itemStyle={{ color: '#E2E8F0' }}
+                itemStyle={{ color: "#E2E8F0" }}
               />
               <Legend />
               <Line
