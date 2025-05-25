@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useAccount } from "~~/hooks/useAccount";
 
 import { Provider, Contract, uint256, Account } from "starknet";
+import scaffoldConfig from "~~/scaffold.config";
 
 export default function SwapTokens() {
   const [amountIn, setAmountIn] = useState(""); // STRK que pone el user
@@ -11,9 +12,26 @@ export default function SwapTokens() {
   const [loading, setLoading] = useState(false);
 
   /* ---------- Constantes de red ---------- */
-  const RPC_URL = "https://starknet-sepolia.public.blastapi.io/rpc/v0_8";
-  const provider = new Provider({ nodeUrl: RPC_URL });
+  const configuredSepoliaRpcUrl = scaffoldConfig.rpcProviderUrl.sepolia;
 
+  if (!configuredSepoliaRpcUrl) {
+    console.error("¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).");
+    alert("¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).");
+    // Podrías retornar un mensaje de error en la UI o deshabilitar la funcionalidad
+    // return <p>Error de configuración: Falta RPC URL para Sepolia.</p>;
+  }
+
+  // Usar la URL del scaffoldConfig para crear el provider.
+  // Memorizar para evitar recrear la instancia en cada render si la URL no cambia.
+  const provider = useMemo(() => {
+    if (!configuredSepoliaRpcUrl) {
+      console.warn("Intentando crear Provider sin RPC_URL válida desde scaffold.config.");
+      return undefined;
+    }
+    return new Provider({ nodeUrl: configuredSepoliaRpcUrl });
+  }, [configuredSepoliaRpcUrl]);
+  
+  
   /* Contratos */
   const POOL_ADDR =
     "0x004bb1c38e8eceb339b96a46c1de40620cc99f458b480a3a91dd3609ef09d0a8";
