@@ -134,10 +134,8 @@ const handleSwap = async () => {
 
     const approveResponse = await strk.approve(
       POOL_ADDR,
-      amountInU256, // starknet.js v5+ puede tomar directamente el objeto u256
-      // Si usas una versión anterior de starknet.js que requiere low/high por separado:
-      // amountInU256.low,
-      // amountInU256.high
+      amountInU256.low,
+      amountInU256.high
     );
     console.log("Transacción de Approve enviada, hash:", approveResponse.transaction_hash);
     setTxHash(`Approve Tx: ${approveResponse.transaction_hash}`); // Feedback inmediato
@@ -158,13 +156,10 @@ const handleSwap = async () => {
 
     const swapResponse = await pool.swap(
       STRK_ADDR,
-      amountInU256, // starknet.js v5+
-      minAmountOutU256, // starknet.js v5+
-      // Si usas una versión anterior de starknet.js que requiere low/high por separado:
-      // amountInU256.low,
-      // amountInU256.high,
-      // minAmountOutU256.low,
-      // minAmountOutU256.high
+      amountInU256.low,
+      amountInU256.high,
+      minAmountOutU256.low,
+      minAmountOutU256.high
     );
     console.log("Transacción de Swap enviada, hash:", swapResponse.transaction_hash);
     setTxHash(swapResponse.transaction_hash); // Actualiza al hash del swap
