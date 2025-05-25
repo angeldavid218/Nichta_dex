@@ -1,9 +1,9 @@
 import {
   UseAccountResult,
   useAccount as useStarknetReactAccount,
-} from '@starknet-react/core';
-import { useEffect, useState, useMemo } from 'react';
-import { AccountInterface, constants } from 'starknet';
+} from "@starknet-react/core";
+import { useEffect, useState, useMemo } from "react";
+import { AccountInterface, constants } from "starknet";
 
 /**
  * Wrapper around starknet react's useAccount hook to fix inconsistencies
@@ -13,8 +13,8 @@ export function useAccount(): UseAccountResult {
   const { account, address, status } = starknetAccount;
 
   const correctedStatus = useMemo(() => {
-    if (status === 'connected' && !account) {
-      return 'connecting';
+    if (status === "connected" && !account) {
+      return "connecting";
     }
     return status;
   }, [status, account]);
@@ -27,7 +27,7 @@ export function useAccount(): UseAccountResult {
         try {
           let chainId: string | bigint;
 
-          if (typeof account.getChainId === 'function') {
+          if (typeof account.getChainId === "function") {
             chainId = await account.getChainId();
           } else if ((account as any).channel?.getChainId) {
             chainId = await (account as any).channel.getChainId();
@@ -48,23 +48,23 @@ export function useAccount(): UseAccountResult {
   }, [account]);
 
   const patchedAccount = useMemo(() => {
-    if (status === 'connected' && address && !account) {
+    if (status === "connected" && address && !account) {
       const provisionalAccount = {
         address,
         execute: async () => {
           throw new Error(
-            'Wallet connection issue. Please refresh and reconnect.'
+            "Wallet connection issue. Please refresh and reconnect.",
           );
         },
         estimateInvokeFee: async () => {
           throw new Error(
-            'Wallet connection issue. Please refresh and reconnect.'
+            "Wallet connection issue. Please refresh and reconnect.",
           );
         },
         getChainId: async () => {
           return constants.StarknetChainId.SN_MAIN;
         },
-        cairoVersion: '1',
+        cairoVersion: "1",
         signer: {},
       };
 

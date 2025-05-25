@@ -1,73 +1,73 @@
-'use client';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useAccount } from '~~/hooks/useAccount';
+"use client";
+import React, { useEffect, useMemo, useState } from "react";
+import { useAccount } from "~~/hooks/useAccount";
 
-import { Provider, Contract, uint256, Account } from 'starknet';
+import { Provider, Contract, uint256, Account } from "starknet";
 
 export default function SwapTokens() {
-  const [amountIn, setAmountIn] = useState(''); // STRK que pone el user
+  const [amountIn, setAmountIn] = useState(""); // STRK que pone el user
   const [amountOut, setAmountOut] = useState<number>(); // ETH resultante
   const [txHash, setTxHash] = useState<string>();
   const [loading, setLoading] = useState(false);
 
   /* ---------- Constantes de red ---------- */
-  const RPC_URL = 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7';
+  const RPC_URL = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7";
   const provider = new Provider({ nodeUrl: RPC_URL });
 
   /* Contratos */
   const POOL_ADDR =
-    '0x004bb1c38e8eceb339b96a46c1de40620cc99f458b480a3a91dd3609ef09d0a8';
+    "0x004bb1c38e8eceb339b96a46c1de40620cc99f458b480a3a91dd3609ef09d0a8";
   const STRK_ADDR =
-    '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d';
+    "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
   const ETH_ADDR =
-    '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7';
+    "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 
   /* ABIs mínimos — solo las funciones que usamos */
   const poolAbi = [
     {
-      name: 'get_amount_out',
-      type: 'function',
+      name: "get_amount_out",
+      type: "function",
       inputs: [
-        { name: 'token_in_address_query', type: 'felt' },
-        { name: 'amount_in_query_low', type: 'felt' },
-        { name: 'amount_in_query_high', type: 'felt' },
+        { name: "token_in_address_query", type: "felt" },
+        { name: "amount_in_query_low", type: "felt" },
+        { name: "amount_in_query_high", type: "felt" },
       ],
-      outputs: [{ name: 'amount_out', type: 'u256' }],
-      stateMutability: 'view',
+      outputs: [{ name: "amount_out", type: "u256" }],
+      stateMutability: "view",
     },
     {
-      name: 'swap',
-      type: 'function',
+      name: "swap",
+      type: "function",
       inputs: [
-        { name: 'token_in_address', type: 'felt' },
-        { name: 'amount_in_low', type: 'felt' },
-        { name: 'amount_in_high', type: 'felt' },
-        { name: 'min_amount_out_low', type: 'felt' },
-        { name: 'min_amount_out_high', type: 'felt' },
+        { name: "token_in_address", type: "felt" },
+        { name: "amount_in_low", type: "felt" },
+        { name: "amount_in_high", type: "felt" },
+        { name: "min_amount_out_low", type: "felt" },
+        { name: "min_amount_out_high", type: "felt" },
       ],
-      outputs: [{ name: 'amount_out', type: 'u256' }],
-      stateMutability: 'external',
+      outputs: [{ name: "amount_out", type: "u256" }],
+      stateMutability: "external",
     },
   ];
 
   const erc20Abi = [
     {
-      name: 'approve',
-      type: 'function',
+      name: "approve",
+      type: "function",
       inputs: [
-        { name: 'spender', type: 'felt' },
-        { name: 'amount_low', type: 'felt' },
-        { name: 'amount_high', type: 'felt' },
+        { name: "spender", type: "felt" },
+        { name: "amount_low", type: "felt" },
+        { name: "amount_high", type: "felt" },
       ],
       outputs: [],
-      stateMutability: 'external',
+      stateMutability: "external",
     },
     {
-      name: 'decimals',
-      type: 'function',
+      name: "decimals",
+      type: "function",
       inputs: [],
-      outputs: [{ name: 'dec', type: 'felt' }],
-      stateMutability: 'view',
+      outputs: [{ name: "dec", type: "felt" }],
+      stateMutability: "view",
     },
   ];
 
@@ -97,7 +97,7 @@ export default function SwapTokens() {
         const res = await pool.get_amount_out(
           STRK_ADDR,
           amountInU256.low,
-          amountInU256.high
+          amountInU256.high,
         );
         setAmountOut(fromUint256(res.amount_out));
       } catch (e) {
@@ -110,7 +110,7 @@ export default function SwapTokens() {
 
   const handleSwap = async () => {
     setLoading(true);
-    if (!account || !amountIn || !amountOut) return alert('Cantidad inválida');
+    if (!account || !amountIn || !amountOut) return alert("Cantidad inválida");
 
     const strk = new Contract(erc20Abi, STRK_ADDR, account);
     const pool = new Contract(poolAbi, POOL_ADDR, account);
@@ -122,13 +122,13 @@ export default function SwapTokens() {
       const { transaction_hash: h1 } = await strk.approve(
         POOL_ADDR,
         amountInU256.low,
-        amountInU256.high
+        amountInU256.high,
       );
-      console.log('approve tx:', h1);
+      console.log("approve tx:", h1);
 
       const approveTx = {
         contractAddress: STRK_ADDR,
-        entrypoint: 'approve',
+        entrypoint: "approve",
         calldata: [
           POOL_ADDR, // spender
           amountInU256.low, // amount low
@@ -144,15 +144,15 @@ export default function SwapTokens() {
         amountInU256.low,
         amountInU256.high,
         minAmountOutU256.low,
-        minAmountOutU256.high
+        minAmountOutU256.high,
       );
-      console.log('swap tx:', h2);
+      console.log("swap tx:", h2);
       setTxHash(h2);
       await account?.waitForTransaction(h2);
-      alert('Swap completed');
+      alert("Swap completed");
     } catch (e) {
       console.error(e);
-      alert('Tx Error');
+      alert("Tx Error");
     } finally {
       setLoading(false);
     }
@@ -187,7 +187,7 @@ export default function SwapTokens() {
             onClick={handleSwap}
             className="btn btn-primary"
           >
-            {!account ? 'Connect Wallet' : loading ? 'Swapping...' : 'Swap'}
+            {!account ? "Connect Wallet" : loading ? "Swapping..." : "Swap"}
 
             <svg
               className="w-6 h-6 text-gray-800 dark:text-white"
