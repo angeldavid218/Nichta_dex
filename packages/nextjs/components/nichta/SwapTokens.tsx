@@ -11,7 +11,7 @@ export default function SwapTokens() {
   const [loading, setLoading] = useState(false);
 
   /* ---------- Constantes de red ---------- */
-  const RPC_URL = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7";
+  const RPC_URL = "https://starknet-sepolia.public.blastapi.io/rpc/v0_8";
   const provider = new Provider({ nodeUrl: RPC_URL });
 
   /* Contratos */
