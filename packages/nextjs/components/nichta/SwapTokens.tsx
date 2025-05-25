@@ -117,6 +117,12 @@ const handleSwap = async () => {
 
   setLoading(true);
   // Es buena práctica instanciar los contratos con 'account' solo cuando vas a enviar una transacción
+  console.log("Account object in handleSwap:", account);
+  if (!account || typeof account.execute !== 'function') {
+    alert("La cuenta de la wallet no está correctamente inicializada o conectada. Por favor, refresca y reconecta.");
+    setLoading(false);
+    return;
+  }  
   const strk = new Contract(erc20Abi, STRK_ADDR, account);
   const pool = new Contract(poolAbi, POOL_ADDR, account);
 
