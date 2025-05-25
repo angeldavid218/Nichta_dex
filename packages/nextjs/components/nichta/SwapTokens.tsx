@@ -108,55 +108,90 @@ export default function SwapTokens() {
     run();
   }, [amountIn, account]);
 
-  const handleSwap = async () => {
-    setLoading(true);
-    if (!account || !amountIn || !amountOut) return alert("Cantidad inválida");
+const handleSwap = async () => {
+  if (!account || !amountIn || !amountOut || parseFloat(amountIn) <= 0) {
+    alert("Por favor, conecta tu wallet e introduce una cantidad válida.");
+    setLoading(false);
+    return;
+  }
 
-    const strk = new Contract(erc20Abi, STRK_ADDR, account);
-    const pool = new Contract(poolAbi, POOL_ADDR, account);
+  setLoading(true);
+  // Es buena práctica instanciar los contratos con 'account' solo cuando vas a enviar una transacción
+  const strk = new Contract(erc20Abi, STRK_ADDR, account);
+  const pool = new Contract(poolAbi, POOL_ADDR, account);
 
-    const amountInU256 = toUint256(amountIn);
-    const minAmountOutU256 = toUint256((amountOut * 0.99).toString()); // 1 % slippage
-    try {
-      /* 1) approve STRK */
-      const { transaction_hash: h1 } = await strk.approve(
-        POOL_ADDR,
-        amountInU256.low,
-        amountInU256.high,
-      );
-      console.log("approve tx:", h1);
+  const amountInU256 = toUint256(amountIn);
+  // Asegúrate que amountOut es un número antes de esta operación
+  const numericAmountOut = typeof amountOut === 'number' ? amountOut : parseFloat(amountOut || "0");
+  const minAmountOutU256 = toUint256((numericAmountOut * 0.99).toString());
 
-      const approveTx = {
-        contractAddress: STRK_ADDR,
-        entrypoint: "approve",
-        calldata: [
-          POOL_ADDR, // spender
-          amountInU256.low, // amount low
-          amountInU256.high, // amount high
-        ],
-      };
-      await account?.execute(approveTx);
-      await account?.waitForTransaction(h1);
+  try {
+    /* 1) approve STRK */
+    console.log(
+      `Aprobando ${amountIn} STRK para el spender ${POOL_ADDR}...`,
+    );
+    console.log("Datos de amountInU256:", amountInU256);
 
-      /* 2) swap */
-      const { transaction_hash: h2 } = await pool.swap(
-        STRK_ADDR,
-        amountInU256.low,
-        amountInU256.high,
-        minAmountOutU256.low,
-        minAmountOutU256.high,
-      );
-      console.log("swap tx:", h2);
-      setTxHash(h2);
-      await account?.waitForTransaction(h2);
-      alert("Swap completed");
-    } catch (e) {
-      console.error(e);
-      alert("Tx Error");
-    } finally {
-      setLoading(false);
+    const approveResponse = await strk.approve(
+      POOL_ADDR,
+      amountInU256, // starknet.js v5+ puede tomar directamente el objeto u256
+      // Si usas una versión anterior de starknet.js que requiere low/high por separado:
+      // amountInU256.low,
+      // amountInU256.high
+    );
+    console.log("Transacción de Approve enviada, hash:", approveResponse.transaction_hash);
+    setTxHash(`Approve Tx: ${approveResponse.transaction_hash}`); // Feedback inmediato
+
+    await account.waitForTransaction(approveResponse.transaction_hash, {
+      retryInterval: 3000,
+      successStates: ["ACCEPTED_ON_L2", "ACCEPTED_ON_L1"],
+    });
+    console.log("Transacción de Approve confirmada.");
+
+    /* 2) swap */
+    console.log(
+      `Ejecutando swap de ${amountIn} STRK por un mínimo de ${
+        numericAmountOut * 0.99
+      } ETH...`,
+    );
+    console.log("Datos de minAmountOutU256:", minAmountOutU256);
+
+    const swapResponse = await pool.swap(
+      STRK_ADDR,
+      amountInU256, // starknet.js v5+
+      minAmountOutU256, // starknet.js v5+
+      // Si usas una versión anterior de starknet.js que requiere low/high por separado:
+      // amountInU256.low,
+      // amountInU256.high,
+      // minAmountOutU256.low,
+      // minAmountOutU256.high
+    );
+    console.log("Transacción de Swap enviada, hash:", swapResponse.transaction_hash);
+    setTxHash(swapResponse.transaction_hash); // Actualiza al hash del swap
+
+    await account.waitForTransaction(swapResponse.transaction_hash, {
+      retryInterval: 3000,
+      successStates: ["ACCEPTED_ON_L2", "ACCEPTED_ON_L1"],
+    });
+    console.log("Transacción de Swap confirmada.");
+    alert("¡Swap completado con éxito!");
+
+  } catch (error: any) {
+    console.error("Error durante el proceso de swap:", error);
+    let detailedMessage = "Error en la transacción.";
+    if (error.message) {
+      detailedMessage += ` Mensaje: ${error.message}`;
     }
-  };
+    // Algunos errores de StarkNet tienen un campo 'details' o 'shortMessage'
+    if (error.details) detailedMessage += ` Detalles: ${error.details}`;
+    if (error.shortMessage) detailedMessage += ` Info: ${error.shortMessage}`;
+
+    alert(detailedMessage);
+    setTxHash(undefined); // Limpiar hash en caso de error
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="p-3">
