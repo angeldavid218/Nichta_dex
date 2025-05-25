@@ -1,85 +1,73 @@
-"use client";
-import React, { useEffect, useMemo, useState } from "react";
-import { useAccount } from "~~/hooks/useAccount";
+'use client';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useAccount } from '~~/hooks/useAccount';
 
-import { Provider, Contract, uint256 } from "starknet";
+import { Provider, Contract, uint256, Account } from 'starknet';
 
 export default function SwapTokens() {
-  const [amountIn, setAmountIn] = useState(""); // STRK que pone el user
+  const [amountIn, setAmountIn] = useState(''); // STRK que pone el user
   const [amountOut, setAmountOut] = useState<number>(); // ETH resultante
   const [txHash, setTxHash] = useState<string>();
   const [loading, setLoading] = useState(false);
 
   /* ---------- Constantes de red ---------- */
-  const RPC_URL = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7";
+  const RPC_URL = 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7';
   const provider = new Provider({ nodeUrl: RPC_URL });
-
-  const ORACLE =
-    "0x36031daa264c24520b11d93af622c848b2499b66b41d611bac95e13cfca131a";
-  const ETH_USD = "19514442401534788";
-  const STRK_USD = "6004514686061859652";
-
-  const POOL =
-    "0x004bb1c38e8eceb339b96a46c1de40620cc99f458b480a3a91dd3609ef09d0a8";
-  const ETH_TOKEN =
-    "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
-  const STRK_TOKEN =
-    "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 
   /* Contratos */
   const POOL_ADDR =
-    "0x004bb1c38e8eceb339b96a46c1de40620cc99f458b480a3a91dd3609ef09d0a8";
+    '0x004bb1c38e8eceb339b96a46c1de40620cc99f458b480a3a91dd3609ef09d0a8';
   const STRK_ADDR =
-    "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
+    '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d';
   const ETH_ADDR =
-    "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+    '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7';
 
   /* ABIs mínimos — solo las funciones que usamos */
   const poolAbi = [
     {
-      name: "get_amount_out",
-      type: "function",
+      name: 'get_amount_out',
+      type: 'function',
       inputs: [
-        { name: "token_in_address_query", type: "felt" },
-        { name: "amount_in_query_low", type: "felt" },
-        { name: "amount_in_query_high", type: "felt" },
+        { name: 'token_in_address_query', type: 'felt' },
+        { name: 'amount_in_query_low', type: 'felt' },
+        { name: 'amount_in_query_high', type: 'felt' },
       ],
-      outputs: [{ name: "amount_out", type: "u256" }],
-      stateMutability: "view",
+      outputs: [{ name: 'amount_out', type: 'u256' }],
+      stateMutability: 'view',
     },
     {
-      name: "swap",
-      type: "function",
+      name: 'swap',
+      type: 'function',
       inputs: [
-        { name: "token_in_address", type: "felt" },
-        { name: "amount_in_low", type: "felt" },
-        { name: "amount_in_high", type: "felt" },
-        { name: "min_amount_out_low", type: "felt" },
-        { name: "min_amount_out_high", type: "felt" },
+        { name: 'token_in_address', type: 'felt' },
+        { name: 'amount_in_low', type: 'felt' },
+        { name: 'amount_in_high', type: 'felt' },
+        { name: 'min_amount_out_low', type: 'felt' },
+        { name: 'min_amount_out_high', type: 'felt' },
       ],
-      outputs: [{ name: "amount_out", type: "u256" }],
-      stateMutability: "external",
+      outputs: [{ name: 'amount_out', type: 'u256' }],
+      stateMutability: 'external',
     },
   ];
 
   const erc20Abi = [
     {
-      name: "approve",
-      type: "function",
+      name: 'approve',
+      type: 'function',
       inputs: [
-        { name: "spender", type: "felt" },
-        { name: "amount_low", type: "felt" },
-        { name: "amount_high", type: "felt" },
+        { name: 'spender', type: 'felt' },
+        { name: 'amount_low', type: 'felt' },
+        { name: 'amount_high', type: 'felt' },
       ],
       outputs: [],
-      stateMutability: "external",
+      stateMutability: 'external',
     },
     {
-      name: "decimals",
-      type: "function",
+      name: 'decimals',
+      type: 'function',
       inputs: [],
-      outputs: [{ name: "dec", type: "felt" }],
-      stateMutability: "view",
+      outputs: [{ name: 'dec', type: 'felt' }],
+      stateMutability: 'view',
     },
   ];
 
@@ -97,9 +85,9 @@ export default function SwapTokens() {
 
   /* ───── UI ───── */
   const { address: accountAddress, account } = useAccount();
-  const address = useMemo(() => accountAddress, [accountAddress]);
 
   useEffect(() => {
+    if (!account) return;
     if (!amountIn || Number(amountIn) <= 0) return setAmountOut(0);
     const run = async () => {
       try {
@@ -109,7 +97,7 @@ export default function SwapTokens() {
         const res = await pool.get_amount_out(
           STRK_ADDR,
           amountInU256.low,
-          amountInU256.high,
+          amountInU256.high
         );
         setAmountOut(fromUint256(res.amount_out));
       } catch (e) {
@@ -118,42 +106,53 @@ export default function SwapTokens() {
       }
     };
     run();
-  }, [amountIn]);
+  }, [amountIn, account]);
 
   const handleSwap = async () => {
     setLoading(true);
-    if (!address || !amountIn || !amountOut) return alert("Cantidad inválida");
+    if (!account || !amountIn || !amountOut) return alert('Cantidad inválida');
 
     const strk = new Contract(erc20Abi, STRK_ADDR, account);
     const pool = new Contract(poolAbi, POOL_ADDR, account);
 
     const amountInU256 = toUint256(amountIn);
     const minAmountOutU256 = toUint256((amountOut * 0.99).toString()); // 1 % slippage
-
     try {
       /* 1) approve STRK */
       const { transaction_hash: h1 } = await strk.approve(
         POOL_ADDR,
         amountInU256.low,
-        amountInU256.high,
+        amountInU256.high
       );
-      console.log("approve tx:", h1);
+      console.log('approve tx:', h1);
+
+      const approveTx = {
+        contractAddress: STRK_ADDR,
+        entrypoint: 'approve',
+        calldata: [
+          POOL_ADDR, // spender
+          amountInU256.low, // amount low
+          amountInU256.high, // amount high
+        ],
+      };
+      await account?.execute(approveTx);
       await account?.waitForTransaction(h1);
+
       /* 2) swap */
       const { transaction_hash: h2 } = await pool.swap(
         STRK_ADDR,
         amountInU256.low,
         amountInU256.high,
         minAmountOutU256.low,
-        minAmountOutU256.high,
+        minAmountOutU256.high
       );
-      console.log("swap tx:", h2);
+      console.log('swap tx:', h2);
       setTxHash(h2);
       await account?.waitForTransaction(h2);
-      alert("Swap completed");
+      alert('Swap completed');
     } catch (e) {
       console.error(e);
-      alert("Tx Error");
+      alert('Tx Error');
     } finally {
       setLoading(false);
     }
@@ -162,7 +161,7 @@ export default function SwapTokens() {
   return (
     <div className="p-3">
       <h2 className="text-xl font-semibold mb-4">Swap Tokens</h2>
-      {!address && (
+      {!account && (
         <p className="text-red-500 text-sm">Please connect your wallet</p>
       )}
       <div className="flex flex-col gap-4">
@@ -184,11 +183,12 @@ export default function SwapTokens() {
         </fieldset>
         <div className="flex justify-center">
           <button
-            disabled={!address || loading}
+            disabled={!account || loading}
             onClick={handleSwap}
             className="btn btn-primary"
           >
-            {loading ? "Swapping..." : "Swap"}
+            {!account ? 'Connect Wallet' : loading ? 'Swapping...' : 'Swap'}
+
             <svg
               className="w-6 h-6 text-gray-800 dark:text-white"
               aria-hidden="true"
