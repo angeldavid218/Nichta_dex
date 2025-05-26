@@ -15,8 +15,12 @@ export default function SwapTokens() {
   const configuredSepoliaRpcUrl = scaffoldConfig.rpcProviderUrl.sepolia;
 
   if (!configuredSepoliaRpcUrl) {
-    console.error("¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).");
-    alert("¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).");
+    console.error(
+      "¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).",
+    );
+    alert(
+      "¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).",
+    );
     // Podrías retornar un mensaje de error en la UI o deshabilitar la funcionalidad
     // return <p>Error de configuración: Falta RPC URL para Sepolia.</p>;
   }
@@ -25,13 +29,14 @@ export default function SwapTokens() {
   // Memorizar para evitar recrear la instancia en cada render si la URL no cambia.
   const provider = useMemo(() => {
     if (!configuredSepoliaRpcUrl) {
-      console.warn("Intentando crear Provider sin RPC_URL válida desde scaffold.config.");
+      console.warn(
+        "Intentando crear Provider sin RPC_URL válida desde scaffold.config.",
+      );
       return undefined;
     }
     return new Provider({ nodeUrl: configuredSepoliaRpcUrl });
   }, [configuredSepoliaRpcUrl]);
-  
-  
+
   /* Contratos */
   const POOL_ADDR =
     "0x004bb1c38e8eceb339b96a46c1de40620cc99f458b480a3a91dd3609ef09d0a8";
@@ -126,91 +131,97 @@ export default function SwapTokens() {
     run();
   }, [amountIn, account]);
 
-const handleSwap = async () => {
-  if (!account || !amountIn || !amountOut || parseFloat(amountIn) <= 0) {
-    alert("Por favor, conecta tu wallet e introduce una cantidad válida.");
-    setLoading(false);
-    return;
-  }
-
-  setLoading(true);
-  // Es buena práctica instanciar los contratos con 'account' solo cuando vas a enviar una transacción
-  console.log("Account object in handleSwap:", account);
-  if (!account || typeof account.execute !== 'function') {
-    alert("La cuenta de la wallet no está correctamente inicializada o conectada. Por favor, refresca y reconecta.");
-    setLoading(false);
-    return;
-  }  
-  const strk = new Contract(erc20Abi, STRK_ADDR, account);
-  const pool = new Contract(poolAbi, POOL_ADDR, account);
-
-  const amountInU256 = toUint256(amountIn);
-  // Asegúrate que amountOut es un número antes de esta operación
-  const numericAmountOut = typeof amountOut === 'number' ? amountOut : parseFloat(amountOut || "0");
-  const minAmountOutU256 = toUint256((numericAmountOut * 0.99).toString());
-
-  try {
-    /* 1) approve STRK */
-    console.log(
-      `Aprobando ${amountIn} STRK para el spender ${POOL_ADDR}...`,
-    );
-    console.log("Datos de amountInU256:", amountInU256);
-
-    const approveResponse = await strk.approve(
-      POOL_ADDR,
-      amountInU256.low,
-      amountInU256.high
-    );
-    console.log("Transacción de Approve enviada, hash:", approveResponse.transaction_hash);
-    setTxHash(`Approve Tx: ${approveResponse.transaction_hash}`); // Feedback inmediato
-
-    await account.waitForTransaction(approveResponse.transaction_hash, {
-      retryInterval: 3000,
-      successStates: ["ACCEPTED_ON_L2", "ACCEPTED_ON_L1"],
-    });
-    console.log("Transacción de Approve confirmada.");
-
-    /* 2) swap */
-    console.log(
-      `Ejecutando swap de ${amountIn} STRK por un mínimo de ${
-        numericAmountOut * 0.99
-      } ETH...`,
-    );
-    console.log("Datos de minAmountOutU256:", minAmountOutU256);
-
-    const swapResponse = await pool.swap(
-      STRK_ADDR,
-      amountInU256.low,
-      amountInU256.high,
-      minAmountOutU256.low,
-      minAmountOutU256.high
-    );
-    console.log("Transacción de Swap enviada, hash:", swapResponse.transaction_hash);
-    setTxHash(swapResponse.transaction_hash); // Actualiza al hash del swap
-
-    await account.waitForTransaction(swapResponse.transaction_hash, {
-      retryInterval: 3000,
-      successStates: ["ACCEPTED_ON_L2", "ACCEPTED_ON_L1"],
-    });
-    console.log("Transacción de Swap confirmada.");
-    alert("¡Swap completado con éxito!");
-
-  } catch (error: any) {
-    console.error("Error durante el proceso de swap:", error);
-    let detailedMessage = "Error en la transacción.";
-    if (error.message) {
-      detailedMessage += ` Mensaje: ${error.message}`;
+  const handleSwap = async () => {
+    if (!account || !amountIn || !amountOut || parseFloat(amountIn) <= 0) {
+      alert("Por favor, conecta tu wallet e introduce una cantidad válida.");
+      setLoading(false);
+      return;
     }
-    // Algunos errores de StarkNet tienen un campo 'details' o 'shortMessage'
-    if (error.details) detailedMessage += ` Detalles: ${error.details}`;
-    if (error.shortMessage) detailedMessage += ` Info: ${error.shortMessage}`;
 
-    alert(detailedMessage);
-    setTxHash(undefined); // Limpiar hash en caso de error
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    // Es buena práctica instanciar los contratos con 'account' solo cuando vas a enviar una transacción
+    console.log("Account object in handleSwap:", account);
+    if (!account || typeof account.execute !== "function") {
+      alert(
+        "La cuenta de la wallet no está correctamente inicializada o conectada. Por favor, refresca y reconecta.",
+      );
+      setLoading(false);
+      return;
+    }
+    const strk = new Contract(erc20Abi, STRK_ADDR, account);
+    const pool = new Contract(poolAbi, POOL_ADDR, account);
+
+    const amountInU256 = toUint256(amountIn);
+    // Asegúrate que amountOut es un número antes de esta operación
+    const numericAmountOut =
+      typeof amountOut === "number" ? amountOut : parseFloat(amountOut || "0");
+    const minAmountOutU256 = toUint256((numericAmountOut * 0.99).toString());
+
+    try {
+      /* 1) approve STRK */
+      console.log(`Aprobando ${amountIn} STRK para el spender ${POOL_ADDR}...`);
+      console.log("Datos de amountInU256:", amountInU256);
+
+      const approveResponse = await strk.approve(
+        POOL_ADDR,
+        amountInU256.low,
+        amountInU256.high,
+      );
+      console.log(
+        "Transacción de Approve enviada, hash:",
+        approveResponse.transaction_hash,
+      );
+      setTxHash(`Approve Tx: ${approveResponse.transaction_hash}`); // Feedback inmediato
+
+      await account.waitForTransaction(approveResponse.transaction_hash, {
+        retryInterval: 3000,
+        successStates: ["ACCEPTED_ON_L2", "ACCEPTED_ON_L1"],
+      });
+      console.log("Transacción de Approve confirmada.");
+
+      /* 2) swap */
+      console.log(
+        `Ejecutando swap de ${amountIn} STRK por un mínimo de ${
+          numericAmountOut * 0.99
+        } ETH...`,
+      );
+      console.log("Datos de minAmountOutU256:", minAmountOutU256);
+
+      const swapResponse = await pool.swap(
+        STRK_ADDR,
+        amountInU256.low,
+        amountInU256.high,
+        minAmountOutU256.low,
+        minAmountOutU256.high,
+      );
+      console.log(
+        "Transacción de Swap enviada, hash:",
+        swapResponse.transaction_hash,
+      );
+      setTxHash(swapResponse.transaction_hash); // Actualiza al hash del swap
+
+      await account.waitForTransaction(swapResponse.transaction_hash, {
+        retryInterval: 3000,
+        successStates: ["ACCEPTED_ON_L2", "ACCEPTED_ON_L1"],
+      });
+      console.log("Transacción de Swap confirmada.");
+      alert("¡Swap completado con éxito!");
+    } catch (error: any) {
+      console.error("Error durante el proceso de swap:", error);
+      let detailedMessage = "Error en la transacción.";
+      if (error.message) {
+        detailedMessage += ` Mensaje: ${error.message}`;
+      }
+      // Algunos errores de StarkNet tienen un campo 'details' o 'shortMessage'
+      if (error.details) detailedMessage += ` Detalles: ${error.details}`;
+      if (error.shortMessage) detailedMessage += ` Info: ${error.shortMessage}`;
+
+      alert(detailedMessage);
+      setTxHash(undefined); // Limpiar hash en caso de error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-3">

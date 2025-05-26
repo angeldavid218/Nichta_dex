@@ -21,8 +21,8 @@ export const AddressInput = ({
 
   const handleChange = useCallback(
     (newValue: Address) => {
-       // ---- INICIO DE LA CORRECCIÓN ----
-      if (typeof newValue !== 'string') {
+      // ---- INICIO DE LA CORRECCIÓN ----
+      if (typeof newValue !== "string") {
         // Si inputValue es undefined, null, o cualquier cosa que no sea un string,
         // pasarlo tal cual o manejarlo (ej. convertir a string vacío).
         // Si onChange espera un string o undefined, esto está bien:
