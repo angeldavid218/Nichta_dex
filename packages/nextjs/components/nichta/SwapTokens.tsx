@@ -1,12 +1,12 @@
-'use client';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useAccount } from '~~/hooks/useAccount';
+"use client";
+import React, { useEffect, useMemo, useState } from "react";
+import { useAccount } from "~~/hooks/useAccount";
 
-import { Provider, Contract, uint256, Account } from 'starknet';
-import scaffoldConfig from '~~/scaffold.config';
+import { Provider, Contract, uint256, Account } from "starknet";
+import scaffoldConfig from "~~/scaffold.config";
 
 export default function SwapTokens() {
-  const [amountIn, setAmountIn] = useState(''); // STRK que pone el user
+  const [amountIn, setAmountIn] = useState(""); // STRK que pone el user
   const [amountOut, setAmountOut] = useState<number>(); // ETH resultante
   const [txHash, setTxHash] = useState<string>();
   const [loading, setLoading] = useState(false);
@@ -16,10 +16,10 @@ export default function SwapTokens() {
 
   if (!configuredSepoliaRpcUrl) {
     console.error(
-      '¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).'
+      "¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).",
     );
     alert(
-      '¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).'
+      "¡Error Crítico! La URL RPC para Sepolia no está configurada en scaffold.config.ts o en el archivo .env (NEXT_PUBLIC_SEPOLIA_PROVIDER_URL).",
     );
     // Podrías retornar un mensaje de error en la UI o deshabilitar la funcionalidad
     // return <p>Error de configuración: Falta RPC URL para Sepolia.</p>;
@@ -30,7 +30,7 @@ export default function SwapTokens() {
   const provider = useMemo(() => {
     if (!configuredSepoliaRpcUrl) {
       console.warn(
-        'Intentando crear Provider sin RPC_URL válida desde scaffold.config.'
+        "Intentando crear Provider sin RPC_URL válida desde scaffold.config.",
       );
       return undefined;
     }
@@ -39,58 +39,58 @@ export default function SwapTokens() {
 
   /* Contratos */
   const POOL_ADDR =
-    '0x004bb1c38e8eceb339b96a46c1de40620cc99f458b480a3a91dd3609ef09d0a8';
+    "0x004bb1c38e8eceb339b96a46c1de40620cc99f458b480a3a91dd3609ef09d0a8";
   const STRK_ADDR =
-    '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d';
+    "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
   const ETH_ADDR =
-    '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7';
+    "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 
   /* ABIs mínimos — solo las funciones que usamos */
   const poolAbi = [
     {
-      name: 'get_amount_out',
-      type: 'function',
+      name: "get_amount_out",
+      type: "function",
       inputs: [
-        { name: 'token_in_address_query', type: 'felt' },
-        { name: 'amount_in_query_low', type: 'felt' },
-        { name: 'amount_in_query_high', type: 'felt' },
+        { name: "token_in_address_query", type: "felt" },
+        { name: "amount_in_query_low", type: "felt" },
+        { name: "amount_in_query_high", type: "felt" },
       ],
-      outputs: [{ name: 'amount_out', type: 'u256' }],
-      stateMutability: 'view',
+      outputs: [{ name: "amount_out", type: "u256" }],
+      stateMutability: "view",
     },
     {
-      name: 'swap',
-      type: 'function',
+      name: "swap",
+      type: "function",
       inputs: [
-        { name: 'token_in_address', type: 'felt' },
-        { name: 'amount_in_low', type: 'felt' },
-        { name: 'amount_in_high', type: 'felt' },
-        { name: 'min_amount_out_low', type: 'felt' },
-        { name: 'min_amount_out_high', type: 'felt' },
+        { name: "token_in_address", type: "felt" },
+        { name: "amount_in_low", type: "felt" },
+        { name: "amount_in_high", type: "felt" },
+        { name: "min_amount_out_low", type: "felt" },
+        { name: "min_amount_out_high", type: "felt" },
       ],
-      outputs: [{ name: 'amount_out', type: 'u256' }],
-      stateMutability: 'external',
+      outputs: [{ name: "amount_out", type: "u256" }],
+      stateMutability: "external",
     },
   ];
 
   const erc20Abi = [
     {
-      name: 'approve',
-      type: 'function',
+      name: "approve",
+      type: "function",
       inputs: [
-        { name: 'spender', type: 'felt' },
-        { name: 'amount_low', type: 'felt' },
-        { name: 'amount_high', type: 'felt' },
+        { name: "spender", type: "felt" },
+        { name: "amount_low", type: "felt" },
+        { name: "amount_high", type: "felt" },
       ],
       outputs: [],
-      stateMutability: 'external',
+      stateMutability: "external",
     },
     {
-      name: 'decimals',
-      type: 'function',
+      name: "decimals",
+      type: "function",
       inputs: [],
-      outputs: [{ name: 'dec', type: 'felt' }],
-      stateMutability: 'view',
+      outputs: [{ name: "dec", type: "felt" }],
+      stateMutability: "view",
     },
   ];
 
@@ -120,7 +120,7 @@ export default function SwapTokens() {
         const res = await pool.get_amount_out(
           STRK_ADDR,
           amountInU256.low,
-          amountInU256.high
+          amountInU256.high,
         );
         setAmountOut(fromUint256(res.amount_out));
       } catch (e) {
@@ -133,17 +133,17 @@ export default function SwapTokens() {
 
   const handleSwap = async () => {
     if (!account || !amountIn || !amountOut || parseFloat(amountIn) <= 0) {
-      alert('Por favor, conecta tu wallet e introduce una cantidad válida.');
+      alert("Por favor, conecta tu wallet e introduce una cantidad válida.");
       setLoading(false);
       return;
     }
 
     setLoading(true);
     // Es buena práctica instanciar los contratos con 'account' solo cuando vas a enviar una transacción
-    console.log('Account object in handleSwap:', account);
-    if (!account || typeof account.execute !== 'function') {
+    console.log("Account object in handleSwap:", account);
+    if (!account || typeof account.execute !== "function") {
       alert(
-        'La cuenta de la wallet no está correctamente inicializada o conectada. Por favor, refresca y reconecta.'
+        "La cuenta de la wallet no está correctamente inicializada o conectada. Por favor, refresca y reconecta.",
       );
       setLoading(false);
       return;
@@ -154,61 +154,61 @@ export default function SwapTokens() {
     const amountInU256 = toUint256(amountIn);
     // Asegúrate que amountOut es un número antes de esta operación
     const numericAmountOut =
-      typeof amountOut === 'number' ? amountOut : parseFloat(amountOut || '0');
+      typeof amountOut === "number" ? amountOut : parseFloat(amountOut || "0");
     const minAmountOutU256 = toUint256((numericAmountOut * 0.99).toString());
 
     try {
       /* 1) approve STRK */
       console.log(`Aprobando ${amountIn} STRK para el spender ${POOL_ADDR}...`);
-      console.log('Datos de amountInU256:', amountInU256);
+      console.log("Datos de amountInU256:", amountInU256);
 
       const approveResponse = await strk.approve(
         POOL_ADDR,
         amountInU256.low,
-        amountInU256.high
+        amountInU256.high,
       );
       console.log(
-        'Transacción de Approve enviada, hash:',
-        approveResponse.transaction_hash
+        "Transacción de Approve enviada, hash:",
+        approveResponse.transaction_hash,
       );
       setTxHash(`Approve Tx: ${approveResponse.transaction_hash}`); // Feedback inmediato
 
       await account.waitForTransaction(approveResponse.transaction_hash, {
         retryInterval: 3000,
-        successStates: ['ACCEPTED_ON_L2', 'ACCEPTED_ON_L1'],
+        successStates: ["ACCEPTED_ON_L2", "ACCEPTED_ON_L1"],
       });
-      console.log('Transacción de Approve confirmada.');
+      console.log("Transacción de Approve confirmada.");
 
       /* 2) swap */
       console.log(
         `Ejecutando swap de ${amountIn} STRK por un mínimo de ${
           numericAmountOut * 0.99
-        } ETH...`
+        } ETH...`,
       );
-      console.log('Datos de minAmountOutU256:', minAmountOutU256);
+      console.log("Datos de minAmountOutU256:", minAmountOutU256);
 
       const swapResponse = await pool.swap(
         STRK_ADDR,
         amountInU256.low,
         amountInU256.high,
         minAmountOutU256.low,
-        minAmountOutU256.high
+        minAmountOutU256.high,
       );
       console.log(
-        'Transacción de Swap enviada, hash:',
-        swapResponse.transaction_hash
+        "Transacción de Swap enviada, hash:",
+        swapResponse.transaction_hash,
       );
       setTxHash(swapResponse.transaction_hash); // Actualiza al hash del swap
 
       await account.waitForTransaction(swapResponse.transaction_hash, {
         retryInterval: 3000,
-        successStates: ['ACCEPTED_ON_L2', 'ACCEPTED_ON_L1'],
+        successStates: ["ACCEPTED_ON_L2", "ACCEPTED_ON_L1"],
       });
-      console.log('Transacción de Swap confirmada.');
-      alert('¡Swap completado con éxito!');
+      console.log("Transacción de Swap confirmada.");
+      alert("¡Swap completado con éxito!");
     } catch (error: any) {
-      console.error('Error durante el proceso de swap:', error);
-      let detailedMessage = 'Error en la transacción.';
+      console.error("Error durante el proceso de swap:", error);
+      let detailedMessage = "Error en la transacción.";
       if (error.message) {
         detailedMessage += ` Mensaje: ${error.message}`;
       }
@@ -254,7 +254,7 @@ export default function SwapTokens() {
             onClick={handleSwap}
             className="btn btn-primary"
           >
-            {!account ? 'Connect Wallet' : loading ? 'Swapping...' : 'Swap'}
+            {!account ? "Connect Wallet" : loading ? "Swapping..." : "Swap"}
 
             <svg
               className="w-6 h-6 text-gray-800 dark:text-white"
