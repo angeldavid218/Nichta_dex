@@ -1,10 +1,10 @@
-import Link from "next/link";
-import { ConnectedAddress } from "~~/components/ConnectedAddress";
-import BuyCoins from "~~/components/nichta/BuyCoins";
-import SwapPoolChart from "~~/components/nichta/SwapPoolChart";
-import Chat from "~~/components/nichta/Chat";
-import SwapTokens from "~~/components/nichta/SwapTokens";
-import Positions from "~~/components/nichta/Positions";
+import Link from 'next/link';
+import { ConnectedAddress } from '~~/components/ConnectedAddress';
+import BuyCoins from '~~/components/nichta/BuyCoins';
+import SwapPoolChart from '~~/components/nichta/SwapPoolChart';
+import Chat from '~~/components/nichta/Chat';
+import SwapTokens from '~~/components/nichta/SwapTokens';
+import Positions from '~~/components/nichta/Positions';
 const Home = () => {
   return (
     <div>
@@ -24,11 +24,8 @@ const Home = () => {
         <div className="mt-4 col-span-1 card bg-base-100">
           <SwapTokens />
         </div>
-        <div className="mt-4 col-span-2 card bg-base-100">
+        <div className="mt-4 col-span-3 card bg-base-100">
           <Positions />
-        </div>
-        <div className="mt-4 col-span-1 card bg-base-100">
-          <p>Token swapper</p>
         </div>
       </div>
     </div>
